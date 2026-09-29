@@ -415,7 +415,7 @@ html[data-view="case"] .wb-only{display:none}
 .who .av.lock{background:linear-gradient(135deg,var(--blue),#1fb6d6)} .who .av.lock svg{width:18px;height:18px;color:#fff}
 
 /* ---------- workbench ---------- */
-.wb{display:grid;grid-template-columns:392px minmax(0,1fr);gap:18px;align-items:start}
+.wb{display:grid;grid-template-columns:350px minmax(0,1fr);gap:18px;align-items:start}
 .wb-form{position:sticky;top:72px;max-height:calc(100vh - 88px);overflow:auto;padding:16px 18px 14px}
 .fld{display:grid;gap:5px;margin-bottom:11px;min-width:0}
 .fld>label{font-size:12.5px;font-weight:600;color:var(--ink-2)}
@@ -449,7 +449,10 @@ details.more[open] summary{margin-bottom:10px}
 .kpi5.hot b{color:var(--ember)} .kpi5.warn b{color:var(--amber)} .kpi5.ok b{color:var(--jade)}
 .bar2{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap} .bar2 .sp{flex:1}
 .seg .n{margin-left:6px;font:600 10.5px var(--mono);color:var(--ink-3)}
-.th.wbt,.row.wbt{grid-template-columns:86px 150px minmax(0,1fr) 148px 18px}
+.th.wbt,.row.wbt{grid-template-columns:84px minmax(0,1fr) 138px 18px;gap:14px}
+.cvel{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin-bottom:2px}
+.cvel .cve{font:500 11.5px var(--mono);color:var(--ink-3)}
+.row.wbt .ev{margin-left:98px}
 .row.wbt .pid{font-size:12.5px}
 .row.wbt .eff b{white-space:nowrap}
 .empty{display:flex;gap:16px;align-items:flex-start;padding:28px}
@@ -478,9 +481,10 @@ details.more[open] summary{margin-bottom:10px}
 .search{max-width:420px}
 .th.kbt,.row.kbt{grid-template-columns:150px minmax(0,1.25fr) minmax(0,1fr) 200px 170px 18px}
 .row.kbt .mono{font:500 11.5px/1.6 var(--mono);color:var(--ink-2);word-break:break-all}
-@media (max-width:1180px){.wb{grid-template-columns:minmax(0,1fr)}.wb-form{position:static;max-height:none}.kpis5{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:1280px){.kpis5{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:1100px){.wb{grid-template-columns:minmax(0,1fr)}.wb-form{position:static;max-height:none}}
 @media (max-width:900px){.rp-head,.recv{grid-template-columns:minmax(0,1fr)}.th.wbt{display:none}.row.wbt{grid-template-columns:1fr auto}
-  .row.wbt>div:nth-child(3),.row.wbt>div:nth-child(4){grid-column:1/-1}.th.kbt{display:none}.row.kbt{grid-template-columns:1fr auto}.row.kbt>div:nth-child(n+3){grid-column:1/-1}
+  .row.wbt>div:nth-child(2),.row.wbt>div:nth-child(3){grid-column:1/-1}.row.wbt .ev{margin-left:0}.th.kbt{display:none}.row.kbt{grid-template-columns:1fr auto}.row.kbt>div:nth-child(n+3){grid-column:1/-1}
   .kpis5{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
@@ -1454,8 +1458,8 @@ function renderResults() {
       : `<span class="eff">${last.step === "版本" ? "按版本自动记录" : "须签发人确认"}<b>VEX ${esc(f.justification)}</b></span>`;
     return `<div class="row wbt" data-p="${f.proposal}">
       <div><span class="chip ${f.proposal}">${VERDICT[f.proposal]}</span></div>
-      <div><div class="pid mono">${esc(f.cve)}</div><div class="cve">KEV ${esc(f.kb.kev_date)}</div></div>
-      <div><div class="sum">${esc(f.kb.title_zh)}</div><div class="sub">${esc(f.summary)}</div></div>
+      <div><div class="cvel"><span class="pid mono">${esc(f.cve)}</span><span class="cve">KEV ${esc(f.kb.kev_date)}</span></div>
+        <div class="sum">${esc(f.kb.title_zh)}</div><div class="sub">${esc(f.summary)}</div></div>
       <div>${next}</div>${ico("chev", "chev")}
       <div class="ev">${f.evidence.map(e => `<div class="st" style="--kc:${STEP[e.step] || "var(--ink-3)"}"><span class="k">${esc(e.step)}</span><div class="f">${esc(zhPre(e.fact))}<span class="src">${esc(e.source)}</span></div></div>`).join("")}
         <div class="st" style="--kc:var(--ink-3)"><span class="k">出处</span><div class="f">${(f.kb.sources || []).map(u => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(u.replace(/^https?:\/\//, ""))}</a>`).join("<br>")}</div></div></div>
@@ -1474,8 +1478,8 @@ function renderResults() {
     .map(([k, l, c]) => `<button type="button" data-f="${k}" class="${S.filter === k ? "on" : ""}">${l}<span class="n">${c}</span></button>`).join("")}</div>
     <div class="sp"></div><button type="button" class="btn sm" id="x-vex">${ico("download")}导出 VEX</button><button type="button" class="btn sm" id="x-csv">${ico("download")}导出 CSV</button></div>
   <div class="card tbl">
-    <div class="th wbt"><span>结论</span><span>漏洞</span><span>判定与依据</span><span>下一步</span><span></span></div>
-    ${shown.map(row).join("") || `<div class="row wbt"><div></div><div></div><div class="sub">这一类没有条目</div></div>`}
+    <div class="th wbt"><span>结论</span><span>漏洞与判定</span><span>下一步</span><span></span></div>
+    ${shown.map(row).join("") || `<div class="row wbt"><div></div><div class="sub">这一类没有条目</div></div>`}
   </div>
   <p class="mnote">内核 ${esc(p.version)} · ${esc(p.arch)} · 配置：${esc(p.configSource || "未提供")} · 软件包：${esc(pk.packages ? p.sbomSource : "未提供")}。点开任一行看依据链。判定结论是提议：除按版本排除外，都须由签发人确认。</p>`;
   $$("#wb-out .row.wbt").forEach(el => el.addEventListener("click", e => {
